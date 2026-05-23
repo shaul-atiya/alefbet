@@ -56,6 +56,7 @@ const statusEl = document.getElementById("status");
 const cardTemplate = document.getElementById("cardTemplate");
 
 let draggedCard = null;
+let hasWon = false;
 const expectedLetters = alphabetCards.map((card) => card.letter);
 
 function shuffleArray(items) {
@@ -77,6 +78,51 @@ function buildCardImage(cardData) {
   `.trim();
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+function triggerWinCelebration() {
+  if (hasWon) {
+    return;
+  }
+
+  hasWon = true;
+
+  const overlay = document.createElement("div");
+  overlay.className = "win-overlay";
+  overlay.innerHTML = `
+    <div class="win-badge">\n      🎉 אלופים! סידרתם את כל האותיות נכון 🎉\n    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const totalPieces = 180;
+
+  for (let i = 0; i < totalPieces; i += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.animationDelay = `${Math.random() * 1.15}s`;
+    piece.style.animationDuration = `${2.8 + Math.random() * 2.6}s`;
+    piece.style.background = ["#ef8b2c", "#1f7a62", "#ffd166", "#4cc9f0", "#f94144"][i % 5];
+    piece.style.width = `${8 + Math.random() * 10}px`;
+    piece.style.height = `${10 + Math.random() * 14}px`;
+    piece.style.opacity = `${0.65 + Math.random() * 0.35}`;
+    piece.style.setProperty("--drift", `${-180 + Math.random() * 360}px`);
+    piece.style.setProperty("--spin", `${360 + Math.random() * 1080}deg`);
+    piece.style.setProperty("--tilt", `${-35 + Math.random() * 70}deg`);
+    if (Math.random() > 0.6) {
+      piece.style.borderRadius = "999px";
+    }
+    overlay.appendChild(piece);
+  }
+
+  setTimeout(() => {
+    overlay.classList.add("fade-out");
+  }, 3000);
+
+  setTimeout(() => {
+    overlay.remove();
+  }, 4200);
 }
 
 function placeCardInTrack(card) {
@@ -134,6 +180,7 @@ function createCard(cardData) {
 
 function renderTray() {
   const shuffled = shuffleArray(alphabetCards);
+  hasWon = false;
   cardsTray.innerHTML = "";
   dropTrack.innerHTML = "";
   statusEl.textContent = "";
@@ -217,6 +264,7 @@ function validateProgress() {
   if (orderedLetters.length === expectedLetters.length) {
     statusEl.textContent = "כל הכבוד! סידרת נכון את כל האותיות.";
     statusEl.className = "status ok";
+    triggerWinCelebration();
     return;
   }
 
@@ -238,6 +286,7 @@ function checkOrder() {
   if (isCorrect) {
     statusEl.textContent = "כל הכבוד! סידרת נכון את כל האותיות.";
     statusEl.className = "status ok";
+    triggerWinCelebration();
   } else {
     statusEl.textContent = "כמעט! נסו שוב ולסדר את האותיות לפי סדר הא-ב.";
     statusEl.className = "status warn";
