@@ -18,6 +18,7 @@
 body {
   margin: 0;
   font-family: "Rubik", "Assistant", "Segoe UI", sans-serif;
+  -webkit-text-size-adjust: 100%;
   color: var(--ink);
   background:
     radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.55), transparent 35%),
@@ -27,7 +28,8 @@ body {
 }
 
 .page {
-  width: min(1024px, 92vw);
+  width: 92vw;
+  max-width: 1024px;
   margin: 0 auto;
   padding: 2rem 0 3rem;
 }
@@ -47,6 +49,7 @@ body {
 
 h1 {
   margin: 0.4rem 0;
+  font-size: 2.1rem;
   font-size: clamp(1.8rem, 3.8vw, 2.7rem);
 }
 
@@ -66,7 +69,6 @@ h1 {
 
 .board-header {
   display: flex;
-  gap: 1rem;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
@@ -74,11 +76,15 @@ h1 {
 
 .board-header h2 {
   margin: 0;
+  margin-left: 1rem;
 }
 
 .actions {
   display: flex;
-  gap: 0.6rem;
+}
+
+.actions button + button {
+  margin-right: 0.6rem;
 }
 
 button {
@@ -101,9 +107,9 @@ button:last-child {
 .track {
   margin-top: 0.9rem;
   direction: rtl;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   min-height: 76px;
   padding: 0.75rem;
   border-radius: 14px;
@@ -120,10 +126,15 @@ button:last-child {
   border: 1px solid rgba(30, 43, 31, 0.2);
   border-radius: 14px;
   min-height: 180px;
-  display: grid;
-  place-items: center;
+  width: calc(25% - 0.7rem);
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   gap: 0.1rem;
+  margin: 0.35rem;
   padding: 0.35rem;
   cursor: grab;
   user-select: none;
@@ -157,6 +168,7 @@ button:last-child {
 }
 
 .word {
+  margin-top: 0.2rem;
   font-size: 0.82rem;
   color: #5f6b57;
 }
@@ -223,9 +235,8 @@ button:last-child {
     padding-top: 1rem;
   }
 
-  .tray,
-  .track {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  .card {
+    width: calc(50% - 0.7rem);
   }
 }
 

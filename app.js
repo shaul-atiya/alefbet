@@ -1,4 +1,4 @@
-const alphabetCards = [
+var alphabetCards = [
   { letter: "א", word: "אוהל" },
   { letter: "ב", word: "בית" },
   { letter: "ג", word: "גמל" },
@@ -23,7 +23,7 @@ const alphabetCards = [
   { letter: "ת", word: "תודה" }
 ];
 
-const letterIcons = {
+var letterIcons = {
   "א": "⛺",
   "ב": "🏠",
   "ג": "🐪",
@@ -48,35 +48,42 @@ const letterIcons = {
   "ת": "🙏"
 };
 
-const cardsTray = document.getElementById("cardsTray");
-const dropTrack = document.getElementById("dropTrack");
-const shuffleBtn = document.getElementById("shuffleBtn");
-const statusEl = document.getElementById("status");
-const cardTemplate = document.getElementById("cardTemplate");
+var cardsTray = document.getElementById("cardsTray");
+var dropTrack = document.getElementById("dropTrack");
+var shuffleBtn = document.getElementById("shuffleBtn");
+var statusEl = document.getElementById("status");
+var cardTemplate = document.getElementById("cardTemplate");
 
-let draggedCard = null;
-let hasWon = false;
-const expectedLetters = alphabetCards.map((card) => card.letter);
+var draggedCard = null;
+var hasWon = false;
+var expectedLetters = alphabetCards.map(function (card) {
+  return card.letter;
+});
 
 function shuffleArray(items) {
-  const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  var arr = items.slice();
+  var i;
+  var j;
+  var temp;
+
+  for (i = arr.length - 1; i > 0; i -= 1) {
+    j = Math.floor(Math.random() * (i + 1));
+    temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
   }
   return arr;
 }
 
 function buildCardImage(cardData) {
-  const icon = letterIcons[cardData.letter] || "🔤";
+  var icon = letterIcons[cardData.letter] || "🔤";
+  var svg = [
+    '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">',
+    '<text x="60" y="82" text-anchor="middle" font-size="82">' + icon + "</text>",
+    "</svg>"
+  ].join("");
 
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
-      <text x="60" y="82" text-anchor="middle" font-size="82">${icon}</text>
-    </svg>
-  `.trim();
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 }
 
 function triggerWinCelebration() {
@@ -86,46 +93,52 @@ function triggerWinCelebration() {
 
   hasWon = true;
 
-  const overlay = document.createElement("div");
+  var overlay = document.createElement("div");
   overlay.className = "win-overlay";
-  overlay.innerHTML = `
-    <div class="win-badge">\n      🎉 אלופים! סידרתם את כל האותיות נכון 🎉\n    </div>
-  `;
+  overlay.innerHTML = '<div class="win-badge">🎉 אלופים! סידרתם את כל האותיות נכון 🎉</div>';
 
   document.body.appendChild(overlay);
 
-  const totalPieces = 180;
+  var totalPieces = 180;
+  var colors = ["#ef8b2c", "#1f7a62", "#ffd166", "#4cc9f0", "#f94144"];
+  var i;
 
-  for (let i = 0; i < totalPieces; i += 1) {
-    const piece = document.createElement("span");
+  for (i = 0; i < totalPieces; i += 1) {
+    var piece = document.createElement("span");
     piece.className = "confetti-piece";
-    piece.style.left = `${Math.random() * 100}%`;
-    piece.style.animationDelay = `${Math.random() * 1.15}s`;
-    piece.style.animationDuration = `${2.8 + Math.random() * 2.6}s`;
-    piece.style.background = ["#ef8b2c", "#1f7a62", "#ffd166", "#4cc9f0", "#f94144"][i % 5];
-    piece.style.width = `${8 + Math.random() * 10}px`;
-    piece.style.height = `${10 + Math.random() * 14}px`;
-    piece.style.opacity = `${0.65 + Math.random() * 0.35}`;
-    piece.style.setProperty("--drift", `${-180 + Math.random() * 360}px`);
-    piece.style.setProperty("--spin", `${360 + Math.random() * 1080}deg`);
-    piece.style.setProperty("--tilt", `${-35 + Math.random() * 70}deg`);
+    piece.style.left = Math.random() * 100 + "%";
+    piece.style.animationDelay = Math.random() * 1.15 + "s";
+    piece.style.animationDuration = 2.8 + Math.random() * 2.6 + "s";
+    piece.style.background = colors[i % 5];
+    piece.style.width = 8 + Math.random() * 10 + "px";
+    piece.style.height = 10 + Math.random() * 14 + "px";
+    piece.style.opacity = 0.65 + Math.random() * 0.35;
+    piece.style.setProperty("--drift", -180 + Math.random() * 360 + "px");
+    piece.style.setProperty("--spin", 360 + Math.random() * 1080 + "deg");
+    piece.style.setProperty("--tilt", -35 + Math.random() * 70 + "deg");
     if (Math.random() > 0.6) {
       piece.style.borderRadius = "999px";
     }
     overlay.appendChild(piece);
   }
 
-  setTimeout(() => {
+  setTimeout(function () {
     overlay.classList.add("fade-out");
   }, 3000);
 
-  setTimeout(() => {
-    overlay.remove();
+  setTimeout(function () {
+    if (overlay.parentNode) {
+      overlay.parentNode.removeChild(overlay);
+    }
   }, 4200);
 }
 
 function placeCardInTrack(card) {
-  const originId = card.parentElement?.id || "";
+  var originId = "";
+  var parent = card.parentElement || card.parentNode;
+  if (parent && parent.id) {
+    originId = parent.id;
+  }
 
   if (originId === "dropTrack") {
     statusEl.textContent = "לא ניתן להזיז כרטיס שכבר הונח. המשיכו עם האות הבאה.";
@@ -133,12 +146,12 @@ function placeCardInTrack(card) {
     return false;
   }
 
-  const nextIndex = dropTrack.querySelectorAll(".card").length;
-  const expectedLetter = expectedLetters[nextIndex];
-  const droppedLetter = card.dataset.letter;
+  var nextIndex = dropTrack.querySelectorAll(".card").length;
+  var expectedLetter = expectedLetters[nextIndex];
+  var droppedLetter = card.getAttribute("data-letter");
 
   if (droppedLetter !== expectedLetter) {
-    statusEl.textContent = `טעות: עכשיו צריך להניח את האות ${expectedLetter}.`;
+    statusEl.textContent = "טעות: עכשיו צריך להניח את האות " + expectedLetter + ".";
     statusEl.className = "status warn";
     return false;
   }
@@ -149,28 +162,28 @@ function placeCardInTrack(card) {
 }
 
 function createCard(cardData) {
-  const fragment = cardTemplate.content.cloneNode(true);
-  const card = fragment.querySelector(".card");
-  const image = fragment.querySelector(".card-image");
-  card.dataset.letter = cardData.letter;
+  var fragment = cardTemplate.content.cloneNode(true);
+  var card = fragment.querySelector(".card");
+  var image = fragment.querySelector(".card-image");
+  card.setAttribute("data-letter", cardData.letter);
 
   image.src = buildCardImage(cardData);
-  image.alt = `איור לאות ${cardData.letter} - ${cardData.word}`;
+  image.alt = "איור לאות " + cardData.letter + " - " + cardData.word;
 
   fragment.querySelector(".letter").textContent = cardData.letter;
   fragment.querySelector(".word").textContent = cardData.word;
 
-  card.addEventListener("dragstart", () => {
+  card.addEventListener("dragstart", function () {
     draggedCard = card;
     card.classList.add("dragging");
   });
 
-  card.addEventListener("dragend", () => {
+  card.addEventListener("dragend", function () {
     card.classList.remove("dragging");
   });
 
   // Mobile-friendly behavior: tap works like dropping into the ordered track.
-  card.addEventListener("click", () => {
+  card.addEventListener("click", function () {
     placeCardInTrack(card);
   });
 
@@ -178,27 +191,29 @@ function createCard(cardData) {
 }
 
 function renderTray() {
-  const shuffled = shuffleArray(alphabetCards);
+  var shuffled = shuffleArray(alphabetCards);
   hasWon = false;
   cardsTray.innerHTML = "";
   dropTrack.innerHTML = "";
   statusEl.textContent = "";
   statusEl.className = "status";
 
-  shuffled.forEach((card) => {
+  shuffled.forEach(function (card) {
     cardsTray.appendChild(createCard(card));
   });
 }
 
 function insertByCursor(container, element, clientX) {
-  const siblings = [...container.querySelectorAll(".card:not(.dragging)")];
-  const isRtl = getComputedStyle(container).direction === "rtl";
-  let inserted = false;
+  var siblings = container.querySelectorAll(".card:not(.dragging)");
+  var isRtl = getComputedStyle(container).direction === "rtl";
+  var inserted = false;
+  var i;
 
-  for (const sibling of siblings) {
-    const rect = sibling.getBoundingClientRect();
-    const center = rect.left + rect.width / 2;
-    const shouldInsertBefore = isRtl ? clientX > center : clientX < center;
+  for (i = 0; i < siblings.length; i += 1) {
+    var sibling = siblings[i];
+    var rect = sibling.getBoundingClientRect();
+    var center = rect.left + rect.width / 2;
+    var shouldInsertBefore = isRtl ? clientX > center : clientX < center;
     if (shouldInsertBefore) {
       container.insertBefore(element, sibling);
       inserted = true;
@@ -212,7 +227,7 @@ function insertByCursor(container, element, clientX) {
 }
 
 function setupDropZone(zone) {
-  zone.addEventListener("dragover", (event) => {
+  zone.addEventListener("dragover", function (event) {
     event.preventDefault();
     if (!draggedCard) {
       return;
@@ -225,7 +240,7 @@ function setupDropZone(zone) {
     insertByCursor(zone, draggedCard, event.clientX);
   });
 
-  zone.addEventListener("drop", (event) => {
+  zone.addEventListener("drop", function (event) {
     event.preventDefault();
     if (!draggedCard) {
       return;
@@ -244,7 +259,13 @@ function setupDropZone(zone) {
 }
 
 function validateProgress() {
-  const orderedLetters = [...dropTrack.querySelectorAll(".card")].map((card) => card.dataset.letter);
+  var cards = dropTrack.querySelectorAll(".card");
+  var orderedLetters = [];
+  var i;
+
+  for (i = 0; i < cards.length; i += 1) {
+    orderedLetters.push(cards[i].getAttribute("data-letter"));
+  }
 
   if (orderedLetters.length === 0) {
     statusEl.textContent = "";
@@ -252,10 +273,16 @@ function validateProgress() {
     return;
   }
 
-  const wrongIndex = orderedLetters.findIndex((letter, index) => letter !== expectedLetters[index]);
+  var wrongIndex = -1;
+  for (i = 0; i < orderedLetters.length; i += 1) {
+    if (orderedLetters[i] !== expectedLetters[i]) {
+      wrongIndex = i;
+      break;
+    }
+  }
 
   if (wrongIndex !== -1) {
-    statusEl.textContent = `יש טעות בסדר ליד האות ${orderedLetters[wrongIndex]}. נסו להזיז את הכרטיס למקום הנכון.`;
+    statusEl.textContent = "יש טעות בסדר ליד האות " + orderedLetters[wrongIndex] + ". נסו להזיז את הכרטיס למקום הנכון.";
     statusEl.className = "status warn";
     return;
   }
