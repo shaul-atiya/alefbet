@@ -15,7 +15,7 @@ const alphabetCards = [
   { letter: "נ", word: "נוצה" },
   { letter: "ס", word: "ספר" },
   { letter: "ע", word: "עין" },
-  { letter: "פ", word: "פרח" },
+  { letter: "פ", word: "פרפר" },
   { letter: "צ", word: "צחוק" },
   { letter: "ק", word: "קוף" },
   { letter: "ר", word: "ראש" },
@@ -40,7 +40,7 @@ const letterIcons = {
   "נ": "🪶",
   "ס": "📘",
   "ע": "👁️",
-  "פ": "🌸",
+  "פ": "🦋",
   "צ": "😄",
   "ק": "🐒",
   "ר": "🧠",
@@ -56,7 +56,6 @@ const statusEl = document.getElementById("status");
 const cardTemplate = document.getElementById("cardTemplate");
 
 let draggedCard = null;
-let dragOriginId = "";
 const expectedLetters = alphabetCards.map((card) => card.letter);
 
 function shuffleArray(items) {
@@ -80,6 +79,30 @@ function buildCardImage(cardData) {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
+function placeCardInTrack(card) {
+  const originId = card.parentElement?.id || "";
+
+  if (originId === "dropTrack") {
+    statusEl.textContent = "לא ניתן להזיז כרטיס שכבר הונח. המשיכו עם האות הבאה.";
+    statusEl.className = "status warn";
+    return false;
+  }
+
+  const nextIndex = dropTrack.querySelectorAll(".card").length;
+  const expectedLetter = expectedLetters[nextIndex];
+  const droppedLetter = card.dataset.letter;
+
+  if (droppedLetter !== expectedLetter) {
+    statusEl.textContent = `טעות: עכשיו צריך להניח את האות ${expectedLetter}.`;
+    statusEl.className = "status warn";
+    return false;
+  }
+
+  dropTrack.appendChild(card);
+  validateProgress();
+  return true;
+}
+
 function createCard(cardData) {
   const fragment = cardTemplate.content.cloneNode(true);
   const card = fragment.querySelector(".card");
@@ -94,13 +117,16 @@ function createCard(cardData) {
 
   card.addEventListener("dragstart", () => {
     draggedCard = card;
-    dragOriginId = card.parentElement?.id || "";
     card.classList.add("dragging");
   });
 
   card.addEventListener("dragend", () => {
     card.classList.remove("dragging");
-    dragOriginId = "";
+  });
+
+  // Mobile-friendly behavior: tap works like dropping into the ordered track.
+  card.addEventListener("click", () => {
+    placeCardInTrack(card);
   });
 
   return fragment;
@@ -160,27 +186,8 @@ function setupDropZone(zone) {
     }
 
     if (zone === dropTrack) {
-      if (dragOriginId === "dropTrack") {
-        statusEl.textContent = "לא ניתן להזיז כרטיס שכבר הונח. המשיכו עם האות הבאה.";
-        statusEl.className = "status warn";
-        draggedCard = null;
-        return;
-      }
-
-      const nextIndex = dropTrack.querySelectorAll(".card").length;
-      const expectedLetter = expectedLetters[nextIndex];
-      const droppedLetter = draggedCard.dataset.letter;
-
-      if (droppedLetter !== expectedLetter) {
-        statusEl.textContent = `טעות: עכשיו צריך להניח את האות ${expectedLetter}.`;
-        statusEl.className = "status warn";
-        draggedCard = null;
-        return;
-      }
-
-      dropTrack.appendChild(draggedCard);
+      placeCardInTrack(draggedCard);
       draggedCard = null;
-      validateProgress();
       return;
     }
 
