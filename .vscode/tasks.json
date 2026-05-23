@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Alphabet Game Server",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-m",
+				"http.server",
+				"5500"
+			],
+			"isBackground": true
+		},
+		{
+			"label": "Open Alphabet Game",
+			"type": "shell",
+			"command": "Start-Process",
+			"args": [
+				"index.html"
+			],
+			"group": "test"
+		}
+	]
+}

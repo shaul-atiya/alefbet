@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>משחק אלף-בית</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">משחק לימודי אינטראקטיבי</p>
+        <h1>מסדרים את האותיות לפי סדר הא-ב</h1>
+        <p class="subtitle">
+          גררו את הכרטיסיות אל המסילה לפי סדר אלפביתי נכון. בסיום תקבלו משוב מידי.
+        </p>
+      </section>
+
+      <section class="board" aria-label="לוח המשחק">
+        <header class="board-header">
+          <h2>כרטיסיות לערבוב</h2>
+          <div class="actions">
+            <button id="shuffleBtn" type="button">ערבב מחדש</button>
+            <button id="checkBtn" type="button">בדוק סדר</button>
+          </div>
+        </header>
+
+        <div id="cardsTray" class="tray" aria-label="אזור כרטיסיות"></div>
+
+        <h3 class="track-title">הסדר שלך</h3>
+        <div id="dropTrack" class="track" aria-label="אזור סידור"></div>
+
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <template id="cardTemplate">
+      <article class="card" draggable="true">
+        <img class="card-image" alt="" draggable="false" />
+        <span class="letter"></span>
+        <span class="word"></span>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
