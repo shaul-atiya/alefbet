@@ -51,7 +51,6 @@ const letterIcons = {
 const cardsTray = document.getElementById("cardsTray");
 const dropTrack = document.getElementById("dropTrack");
 const shuffleBtn = document.getElementById("shuffleBtn");
-const checkBtn = document.getElementById("checkBtn");
 const statusEl = document.getElementById("status");
 const cardTemplate = document.getElementById("cardTemplate");
 
@@ -272,29 +271,7 @@ function validateProgress() {
   statusEl.className = "status ok";
 }
 
-function checkOrder() {
-  const orderedLetters = [...dropTrack.querySelectorAll(".card")].map((card) => card.dataset.letter);
-
-  if (orderedLetters.length !== alphabetCards.length) {
-    statusEl.textContent = "יש להעביר את כל הכרטיסיות למסלול הסדר לפני הבדיקה.";
-    statusEl.className = "status warn";
-    return;
-  }
-
-  const isCorrect = orderedLetters.every((letter, i) => letter === expectedLetters[i]);
-
-  if (isCorrect) {
-    statusEl.textContent = "כל הכבוד! סידרת נכון את כל האותיות.";
-    statusEl.className = "status ok";
-    triggerWinCelebration();
-  } else {
-    statusEl.textContent = "כמעט! נסו שוב ולסדר את האותיות לפי סדר הא-ב.";
-    statusEl.className = "status warn";
-  }
-}
-
 shuffleBtn.addEventListener("click", renderTray);
-checkBtn.addEventListener("click", checkOrder);
 
 setupDropZone(cardsTray);
 setupDropZone(dropTrack);
